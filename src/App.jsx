@@ -1,14 +1,14 @@
 import { useState } from 'react';
    import { Home, ShoppingBasket, ChefHat, ShoppingCart } from 'lucide-react';
 
-   // Placeholder components
-   const HomePage = () => <div className="p-4">Home Page Content</div>;
-   const PantryPage = () => <div className="p-4">Pantry Page Content</div>;
-   const RecipesPage = () => <div className="p-4">Recipes Page Content</div>;
-   const ShoppingPage = () => <div className="p-4">Shopping Page Content</div>;
-
    function App() {
      const [activeTab, setActiveTab] = useState('home');
+
+     // Placeholder components
+     const HomePage = () => <div className="p-4">Home Page Content</div>;
+     const PantryPage = () => <div className="p-4">Pantry Page Content</div>;
+     const RecipesPage = () => <div className="p-4">Recipes Page Content</div>;
+     const ShoppingPage = () => <div className="p-4">Shopping Page Content</div>;
 
      const renderContent = () => {
        switch(activeTab) {
@@ -21,7 +21,7 @@ import { useState } from 'react';
      };
 
      return (
-       <div className="min-h-screen bg-background pb-20">
+       <div className="min-h-screen bg-[#FFFBF5] pb-20">
          {/* Header */}
          <header className="bg-white shadow-sm p-4">
            <h1 className="text-2xl font-bold text-[#292524] flex items-center gap-2">
@@ -48,7 +48,7 @@ import { useState } from 'react';
                  onClick={() => setActiveTab(id)}
                  className={`flex flex-col items-center gap-1 py-2 px-4 rounded-lg transition-colors ${
                    activeTab === id 
-                     ? 'text-primary bg-orange-50' 
+                     ? 'text-[#FF8C42] bg-orange-50' 
                      : 'text-gray-500'
                  }`}
                >
