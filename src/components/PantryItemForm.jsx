@@ -165,22 +165,22 @@ const PantryItemForm = ({ initialValues, onSubmit, onCancel, submitLabel = 'Add 
         </div>
       </div>
       
-      {/* Buttons */}
-      <div className="flex gap-3 pt-4">
-        <button
-          type="button"
-          onClick={onCancel}
-          className="flex-1 px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
-        >
-          Cancel
-        </button>
-        <button
-          type="submit"
-          className="flex-1 px-4 py-2 bg-[#FF8C42] text-white rounded-md hover:bg-[#F97316]"
-        >
-          {submitLabel}
-        </button>
-      </div>
+  {/* Buttons */}
+<div className="flex gap-3 pt-4">
+  <button
+    type="button"
+    onClick={onCancel}
+    className="flex-1 px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors"
+  >
+    Cancel
+  </button>
+ <button
+  type="submit"
+  className="flex-1 px-4 py-2 bg-[#FF8C42] text-white rounded-md hover:bg-[#F97316] transition-colors font-semibold shadow-md border-2 border-[#FF8C42]"
+>
+  {submitLabel}
+</button>
+</div>
     </form>
   );
 };

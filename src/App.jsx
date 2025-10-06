@@ -12,11 +12,11 @@ function App() {
 
   const renderContent = () => {
     switch(activeTab) {
-      case 'home': return <HomePage />;
+      case 'home': return <HomePage onNavigate={setActiveTab} />;
       case 'pantry': return <PantryPage />;
       case 'recipes': return <RecipesPage />;
       case 'shopping': return <ShoppingPage />;
-      default: return <HomePage />;
+      default: return <HomePage onNavigate={setActiveTab} />;
     }
   };
 
