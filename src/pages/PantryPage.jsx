@@ -4,13 +4,16 @@ import usePantry from '../hooks/usePantry';
 import Modal from '../components/Modal';
 import PantryItemForm from '../components/PantryItemForm';
 import PantryItemCard from '../components/PantryItemCard';
+import BarcodeScanner from '../components/BarcodeScanner';
 
 const PantryPage = () => {
   const { items, addItem, updateItem, removeItem, getItemsByCategory } = usePantry();
   const [searchTerm, setSearchTerm] = useState('');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isScannerOpen, setIsScannerOpen] = useState(false);
   const [currentItem, setCurrentItem] = useState(null);
+  const [scannedItem, setScannedItem] = useState(null);
   
   const itemsByCategory = getItemsByCategory();
   
@@ -29,6 +32,7 @@ const PantryPage = () => {
   const handleAddItem = (formData) => {
     addItem(formData);
     setIsAddModalOpen(false);
+    setScannedItem(null);
   };
   
   const handleEditItem = (formData) => {
@@ -37,6 +41,13 @@ const PantryPage = () => {
       setIsEditModalOpen(false);
       setCurrentItem(null);
     }
+  };
+  
+  const handleScan = (productInfo) => {
+    console.log("Scan result:", productInfo);
+    setScannedItem(productInfo);
+    setIsScannerOpen(false);
+    setIsAddModalOpen(true);
   };
   
   const openEditModal = (item) => {
@@ -49,7 +60,7 @@ const PantryPage = () => {
       {/* Top Actions */}
       <div className="flex gap-3 mb-6">
         <button 
-          onClick={() => {}} 
+          onClick={() => setIsScannerOpen(true)} 
           className="flex items-center gap-2 px-4 py-2.5 bg-[#FF8C42] text-white rounded-lg font-medium"
         >
           <Camera size={20} />
@@ -60,7 +71,7 @@ const PantryPage = () => {
           className="flex items-center gap-2 px-4 py-2.5 bg-[#10B981] text-white rounded-lg font-medium"
         >
           <Plus size={20} />
-          <span>Add Manually</span>
+          <span>Add Manual</span>
         </button>
       </div>
       
@@ -129,29 +140,51 @@ const PantryPage = () => {
       {/* Add Item Modal */}
       <Modal
         isOpen={isAddModalOpen}
-        onClose={() => setIsAddModalOpen(false)}
+        onClose={() => {
+          setIsAddModalOpen(false);
+          setScannedItem(null);
+        }}
         title="Add Item to Pantry"
       >
         <PantryItemForm 
+          initialValues={scannedItem || {}}
           onSubmit={handleAddItem}
-          onCancel={() => setIsAddModalOpen(false)}
+          onCancel={() => {
+            setIsAddModalOpen(false);
+            setScannedItem(null);
+          }}
         />
       </Modal>
       
       {/* Edit Item Modal */}
       <Modal
         isOpen={isEditModalOpen}
-        onClose={() => setIsEditModalOpen(false)}
-        title="Edit Pantry Item"
+        onClose={() => {
+          setIsEditModalOpen(false);
+          setCurrentItem(null);
+        }}
+        title="Edit Item"
       >
-        {currentItem && (
-          <PantryItemForm 
-            initialValues={currentItem}
-            onSubmit={handleEditItem}
-            onCancel={() => setIsEditModalOpen(false)}
-            submitLabel="Save Changes"
-          />
-        )}
+        <PantryItemForm 
+          initialValues={currentItem || {}}
+          onSubmit={handleEditItem}
+          onCancel={() => {
+            setIsEditModalOpen(false);
+            setCurrentItem(null);
+          }}
+        />
+      </Modal>
+      
+      {/* Barcode Scanner Modal */}
+      <Modal
+        isOpen={isScannerOpen}
+        onClose={() => setIsScannerOpen(false)}
+        title="Scan Barcode"
+      >
+        <BarcodeScanner 
+          onScan={handleScan}
+          onClose={() => setIsScannerOpen(false)}
+        />
       </Modal>
     </div>
   );
