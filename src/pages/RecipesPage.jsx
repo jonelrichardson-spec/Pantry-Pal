@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Search, ChefHat, Clock, Users, X, ExternalLink } from 'lucide-react';
+import { Search, ChefHat, Clock, Users, X, ExternalLink, ShoppingCart } from 'lucide-react';
 import usePantry from '../hooks/usePantry';
 import useRecipes from '../hooks/useRecipes';
+import useShoppingList from '../hooks/useShoppingList';
 import Modal from '../components/Modal';
 
 const RecipesPage = () => {
   const { items } = usePantry();
+  const { addItems } = useShoppingList();
   const { 
     findRecipesByIngredients, 
     getRecipeDetails, 
@@ -50,6 +52,40 @@ const RecipesPage = () => {
       setSelectedRecipe(details);
       setShowDetailModal(true);
     }
+  };
+  
+  const handleAddToShoppingList = (recipe) => {
+    // Get missing ingredients from the full recipe details
+    const missingIngredients = [];
+    
+    if (recipe.extendedIngredients) {
+      // Check each ingredient against pantry
+      recipe.extendedIngredients.forEach(ing => {
+        const isInPantry = items.some(pantryItem => 
+          pantryItem.name.toLowerCase().includes(ing.name.toLowerCase()) ||
+          ing.name.toLowerCase().includes(pantryItem.name.toLowerCase())
+        );
+        
+        if (!isInPantry) {
+          missingIngredients.push(ing);
+        }
+      });
+    }
+    
+    if (missingIngredients.length === 0) {
+      alert('You have all ingredients for this recipe!');
+      return;
+    }
+    
+    const shoppingItems = missingIngredients.map(ing => ({
+      name: ing.name,
+      quantity: ing.amount ? `${ing.amount} ${ing.unit}` : '1',
+      category: 'Other',
+      recipeSource: recipe.title
+    }));
+    
+    addItems(shoppingItems, recipe.title);
+    alert(`Added ${shoppingItems.length} ingredient${shoppingItems.length !== 1 ? 's' : ''} to your shopping list!`);
   };
   
   const getMatchPercentage = (recipe) => {
@@ -391,6 +427,16 @@ const RecipesPage = () => {
                   dangerouslySetInnerHTML={{ __html: selectedRecipe.instructions }}
                 />
               </div>
+            )}
+            
+            {selectedRecipe.extendedIngredients && (
+              <button
+                onClick={() => handleAddToShoppingList(selectedRecipe)}
+                className="w-full px-4 py-2 bg-[#10B981] text-white rounded-lg font-medium hover:bg-[#059669] transition-colors flex items-center justify-center gap-2"
+              >
+                <ShoppingCart size={18} />
+                Add Missing Ingredients to Shopping List
+              </button>
             )}
             
             {selectedRecipe.sourceUrl && (
