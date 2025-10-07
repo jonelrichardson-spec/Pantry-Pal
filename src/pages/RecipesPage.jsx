@@ -5,7 +5,7 @@ import useRecipes from '../hooks/useRecipes';
 import useShoppingList from '../hooks/useShoppingList';
 import Modal from '../components/Modal';
 
-const RecipesPage = () => {
+const RecipesPage = ({ searchIngredient, onClearSearch }) => {
   const { items } = usePantry();
   const { addItems } = useShoppingList();
   const { 
@@ -22,6 +22,22 @@ const RecipesPage = () => {
   const [numberOfRecipes, setNumberOfRecipes] = useState(10);
   const [dietaryFilter, setDietaryFilter] = useState('');
   const [mealTypeFilter, setMealTypeFilter] = useState('');
+  
+  // Auto-search when navigating with specific ingredient
+  useEffect(() => {
+    if (searchIngredient && items.length > 0) {
+      const ingredients = items.map(item => item.name);
+      
+      findRecipesByIngredients(ingredients, numberOfRecipes, 1, true)
+        .then(results => {
+          setRecipes(results);
+          setSearchPerformed(true);
+        });
+      
+      onClearSearch();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchIngredient]);
   
   const getIngredientList = () => {
     return items.map(item => item.name);
@@ -55,11 +71,9 @@ const RecipesPage = () => {
   };
   
   const handleAddToShoppingList = (recipe) => {
-    // Get missing ingredients from the full recipe details
     const missingIngredients = [];
     
     if (recipe.extendedIngredients) {
-      // Check each ingredient against pantry
       recipe.extendedIngredients.forEach(ing => {
         const isInPantry = items.some(pantryItem => 
           pantryItem.name.toLowerCase().includes(ing.name.toLowerCase()) ||

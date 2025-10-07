@@ -158,12 +158,12 @@ const HomePage = ({ onNavigate }) => {
                       )}
                     </div>
                   </div>
-                  <button 
-                    onClick={() => onNavigate('recipes')}
-                    className="px-4 py-2 bg-[#FF8C42] text-white text-sm rounded-lg hover:bg-[#F97316] transition-colors whitespace-nowrap ml-3"
-                  >
-                    Find Recipe
-                  </button>
+                <button 
+  onClick={() => onNavigate('recipes', item.name)}
+  className="px-4 py-2 bg-[#FF8C42] text-white text-sm rounded-lg hover:bg-[#F97316] transition-colors whitespace-nowrap ml-3"
+>
+  Find Recipe
+</button>
                 </div>
               );
             })}

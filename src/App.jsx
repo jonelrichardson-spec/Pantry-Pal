@@ -9,14 +9,20 @@ import ShoppingPage from './pages/ShoppingPage';
 
 function App() {
   const [activeTab, setActiveTab] = useState('home');
+  const [searchIngredient, setSearchIngredient] = useState(null);
+
+  const handleNavigateWithIngredient = (tab, ingredient = null) => {
+    setActiveTab(tab);
+    setSearchIngredient(ingredient);
+  };
 
   const renderContent = () => {
     switch(activeTab) {
-      case 'home': return <HomePage onNavigate={setActiveTab} />;
+      case 'home': return <HomePage onNavigate={handleNavigateWithIngredient} />;
       case 'pantry': return <PantryPage />;
-      case 'recipes': return <RecipesPage />;
+      case 'recipes': return <RecipesPage searchIngredient={searchIngredient} onClearSearch={() => setSearchIngredient(null)} />;
       case 'shopping': return <ShoppingPage />;
-      default: return <HomePage onNavigate={setActiveTab} />;
+      default: return <HomePage onNavigate={handleNavigateWithIngredient} />;
     }
   };
 
