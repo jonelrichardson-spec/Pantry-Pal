@@ -26,12 +26,22 @@ const PantryItemForm = ({ initialValues, onSubmit, onCancel, submitLabel = 'Add 
   });
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
+  const { name, value } = e.target;
+  
+  // Strip dollar sign from price field
+  if (name === 'price') {
+    const cleanedPrice = value.replace(/[^0-9.]/g, ''); // Remove everything except numbers and decimal
+    setFormData({
+      ...formData,
+      [name]: cleanedPrice,
+    });
+  } else {
     setFormData({
       ...formData,
       [name]: value,
     });
-  };
+  }
+};
 
   const handleSubmit = (e) => {
     e.preventDefault();
