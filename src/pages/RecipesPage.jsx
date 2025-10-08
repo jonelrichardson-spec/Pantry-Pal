@@ -28,14 +28,22 @@ const RecipesPage = ({ searchIngredient, onClearSearch }) => {
   // Auto-search when navigating with specific ingredient
  // Auto-search when navigating with specific ingredient
 // Auto-search when navigating with specific ingredient
+// Auto-search when navigating with specific ingredient
 useEffect(() => {
+  console.log("useEffect triggered - searchIngredient:", searchIngredient);
+  console.log("Items available:", items.length);
+  
   if (searchIngredient) {
     console.log("Searching for recipes with ingredient:", searchIngredient);
     
-    // Search using just the specific ingredient first
+    // Check if API key exists
+    const apiKey = import.meta.env.VITE_SPOONACULAR_API_KEY;
+    console.log("API key exists?", !!apiKey);
+    
+    // Search using just the specific ingredient
     findRecipesByIngredients([searchIngredient], numberOfRecipes, 1, true)
       .then(results => {
-        console.log("Found recipes:", results);
+        console.log("Found recipes:", results.length);
         setRecipes(results);
         setSearchPerformed(true);
       })
