@@ -9,7 +9,7 @@ const BarcodeScanner = ({ onScan, onClose }) => {
   const [cameraError, setCameraError] = useState('');
   const [isScanning, setIsScanning] = useState(false);
   const html5QrCodeRef = useRef(null);
-  const hasScannedRef = useRef(false); // Prevent multiple scans
+  const hasScannedRef = useRef(false);
   
   useEffect(() => {
     if (scanMode === 'camera' && !isScanning) {
@@ -21,10 +21,39 @@ const BarcodeScanner = ({ onScan, onClose }) => {
     };
   }, [scanMode]);
   
+  // Estimate price based on product category/type
+  const estimatePrice = (product) => {
+    const categories = product.categories_tags || [];
+    const productName = (product.product_name || '').toLowerCase();
+    
+    // Basic price estimation based on common categories
+    if (categories.some(cat => cat.includes('beverages')) || productName.includes('drink') || productName.includes('soda')) {
+      return (Math.random() * 2 + 1.5).toFixed(2); // $1.50 - $3.50
+    }
+    if (categories.some(cat => cat.includes('snacks')) || productName.includes('chips') || productName.includes('candy')) {
+      return (Math.random() * 3 + 2).toFixed(2); // $2.00 - $5.00
+    }
+    if (categories.some(cat => cat.includes('dairy')) || productName.includes('milk') || productName.includes('cheese')) {
+      return (Math.random() * 4 + 3).toFixed(2); // $3.00 - $7.00
+    }
+    if (categories.some(cat => cat.includes('meat')) || productName.includes('chicken') || productName.includes('beef')) {
+      return (Math.random() * 8 + 5).toFixed(2); // $5.00 - $13.00
+    }
+    if (categories.some(cat => cat.includes('spreads')) || productName.includes('nutella') || productName.includes('jam')) {
+      return (Math.random() * 4 + 3.5).toFixed(2); // $3.50 - $7.50
+    }
+    if (categories.some(cat => cat.includes('cereals')) || productName.includes('cereal')) {
+      return (Math.random() * 3 + 4).toFixed(2); // $4.00 - $7.00
+    }
+    
+    // Default price for unknown categories
+    return (Math.random() * 5 + 3).toFixed(2); // $3.00 - $8.00
+  };
+  
   const startCamera = async () => {
     setCameraError('');
     setIsScanning(true);
-    hasScannedRef.current = false; // Reset scan flag
+    hasScannedRef.current = false;
     
     try {
       console.log("Initializing camera...");
@@ -59,7 +88,6 @@ const BarcodeScanner = ({ onScan, onClose }) => {
           ]
         },
         (decodedText, decodedResult) => {
-          // Prevent multiple scans of the same barcode
           if (!hasScannedRef.current) {
             console.log("Scanned barcode:", decodedText);
             hasScannedRef.current = true;
@@ -102,19 +130,15 @@ const BarcodeScanner = ({ onScan, onClose }) => {
   const handleSuccessfulScan = async (barcode) => {
     console.log("Barcode detected, stopping camera immediately");
     
-    // CRITICAL: Stop camera FIRST before doing anything else
     await stopCamera();
     
-    // Add haptic feedback
     if (navigator.vibrate) {
       navigator.vibrate(200);
     }
     
-    // Now fetch product info
     fetchProductInfo(barcode);
     setScanMode('manual');
     
-    // Clear state to prevent re-rendering issues
     setManualInput('');
     setError('');
     setCameraError('');
@@ -136,6 +160,9 @@ const BarcodeScanner = ({ onScan, onClose }) => {
       if (data.status === 1) {
         const product = data.product;
         
+        // Estimate price based on product data
+        const estimatedPrice = estimatePrice(product);
+        
         const productInfo = {
           name: product.product_name || 'Unknown Product',
           barcode: barcode,
@@ -143,8 +170,10 @@ const BarcodeScanner = ({ onScan, onClose }) => {
           quantity: 1,
           unit: 'units',
           purchaseDate: new Date().toISOString().slice(0, 10),
+          price: estimatedPrice,
         };
         
+        console.log("Estimated price:", estimatedPrice);
         onScan(productInfo);
       } else {
         setError('Product not found. Please try another barcode or add manually.');
@@ -155,6 +184,7 @@ const BarcodeScanner = ({ onScan, onClose }) => {
           quantity: 1,
           unit: 'units',
           purchaseDate: new Date().toISOString().slice(0, 10),
+          price: '',
         });
       }
     } catch (error) {
