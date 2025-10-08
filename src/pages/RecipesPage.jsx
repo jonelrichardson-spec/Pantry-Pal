@@ -4,6 +4,7 @@ import usePantry from '../hooks/usePantry';
 import useRecipes from '../hooks/useRecipes';
 import useShoppingList from '../hooks/useShoppingList';
 import Modal from '../components/Modal';
+import toast from 'react-hot-toast';
 
 const RecipesPage = ({ searchIngredient, onClearSearch }) => {
   const { items } = usePantry();
@@ -47,7 +48,7 @@ const RecipesPage = ({ searchIngredient, onClearSearch }) => {
     const ingredients = getIngredientList();
     
     if (ingredients.length === 0) {
-      alert('Add some items to your pantry first!');
+      toast.error('Add some items to your pantry first!');
       return;
     }
     
@@ -111,7 +112,7 @@ const RecipesPage = ({ searchIngredient, onClearSearch }) => {
     }));
     
     addItems(shoppingItems, recipe.title);
-    alert(`Added ${shoppingItems.length} ingredient${shoppingItems.length !== 1 ? 's' : ''} to your shopping list!`);
+    toast.success(`Added ${shoppingItems.length} ingredient${shoppingItems.length !== 1 ? 's' : ''} to your shopping list!`);
   };
   
   const getMatchPercentage = (recipe) => {

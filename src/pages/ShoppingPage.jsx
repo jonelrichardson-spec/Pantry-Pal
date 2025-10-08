@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Plus, Trash2, Check, ShoppingCart, List } from 'lucide-react';
+import { Plus, Trash2, Check, ShoppingCart } from 'lucide-react';
+import toast from 'react-hot-toast';
 import useShoppingList from '../hooks/useShoppingList';
 import usePantry from '../hooks/usePantry';
 
@@ -17,7 +18,7 @@ const ShoppingPage = () => {
   const { items: pantryItems } = usePantry();
   
   const [showAddForm, setShowAddForm] = useState(false);
-  const [addMode, setAddMode] = useState('single'); // 'single' or 'bulk'
+  const [addMode, setAddMode] = useState('single');
   const [newItemName, setNewItemName] = useState('');
   const [newItemCategory, setNewItemCategory] = useState('Other');
   const [newItemQuantity, setNewItemQuantity] = useState('1');
@@ -54,6 +55,7 @@ const ShoppingPage = () => {
       completed: false
     });
     
+    toast.success(`Added "${newItemName}" to shopping list!`);
     setNewItemName('');
     setNewItemQuantity('1');
     setShowAddForm(false);
@@ -81,7 +83,59 @@ const ShoppingPage = () => {
     addItems(itemsToAdd);
     setBulkText('');
     setShowAddForm(false);
-    alert(`Added ${itemsToAdd.length} items to your shopping list!`);
+    toast.success(`Added ${itemsToAdd.length} item${itemsToAdd.length !== 1 ? 's' : ''} to shopping list!`);
+  };
+  
+  const handleClearCompleted = () => {
+    toast((t) => (
+      <div className="flex flex-col gap-3">
+        <p>Clear all completed items?</p>
+        <div className="flex gap-2">
+          <button
+            onClick={() => {
+              clearCompletedItems();
+              toast.dismiss(t.id);
+              toast.success('Completed items cleared!');
+            }}
+            className="flex-1 px-3 py-1.5 bg-red-500 text-white rounded text-sm"
+          >
+            Clear
+          </button>
+          <button
+            onClick={() => toast.dismiss(t.id)}
+            className="flex-1 px-3 py-1.5 bg-gray-300 text-gray-700 rounded text-sm"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    ), { duration: 10000 });
+  };
+  
+  const handleRemoveItem = (item) => {
+    toast((t) => (
+      <div className="flex flex-col gap-3">
+        <p>Remove "{item.name}" from shopping list?</p>
+        <div className="flex gap-2">
+          <button
+            onClick={() => {
+              removeItem(item.id);
+              toast.dismiss(t.id);
+              toast.success('Item removed!');
+            }}
+            className="flex-1 px-3 py-1.5 bg-red-500 text-white rounded text-sm"
+          >
+            Remove
+          </button>
+          <button
+            onClick={() => toast.dismiss(t.id)}
+            className="flex-1 px-3 py-1.5 bg-gray-300 text-gray-700 rounded text-sm"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    ), { duration: 10000 });
   };
   
   const uncompletedCount = items.filter(item => !item.completed).length;
@@ -119,7 +173,7 @@ const ShoppingPage = () => {
         
         {completedCount > 0 && (
           <button
-            onClick={clearCompletedItems}
+            onClick={handleClearCompleted}
             className="flex items-center gap-2 px-4 py-2 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 transition-colors"
           >
             <Trash2 size={20} />
@@ -325,7 +379,7 @@ const ShoppingPage = () => {
                     </div>
                     
                     <button
-                      onClick={() => removeItem(item.id)}
+                      onClick={() => handleRemoveItem(item)}
                       className="flex-shrink-0 p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
                     >
                       <Trash2 size={18} />

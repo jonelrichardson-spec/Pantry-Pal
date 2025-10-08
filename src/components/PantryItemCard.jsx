@@ -1,5 +1,6 @@
 import React from 'react';
 import { Pencil, Trash2, CheckCircle, AlertCircle, Clock } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 const PantryItemCard = ({ item, onEdit, onDelete }) => {
   const getDaysUntilExpiration = () => {
@@ -131,9 +132,29 @@ const PantryItemCard = ({ item, onEdit, onDelete }) => {
         </button>
         <button
           onClick={() => {
-            if (window.confirm(`Mark "${item.name}" as used up?`)) {
-              onDelete(item.id);
-            }
+            toast((t) => (
+              <div className="flex flex-col gap-3">
+                <p>Mark "{item.name}" as used up?</p>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => {
+                      onDelete(item.id);
+                      toast.dismiss(t.id);
+                      toast.success('Item marked as used!');
+                    }}
+                    className="flex-1 px-3 py-1.5 bg-green-500 text-white rounded text-sm"
+                  >
+                    Yes
+                  </button>
+                  <button
+                    onClick={() => toast.dismiss(t.id)}
+                    className="flex-1 px-3 py-1.5 bg-gray-300 text-gray-700 rounded text-sm"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            ), { duration: 10000 });
           }}
           className="p-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors"
           title="Used Up"
@@ -142,9 +163,29 @@ const PantryItemCard = ({ item, onEdit, onDelete }) => {
         </button>
         <button
           onClick={() => {
-            if (window.confirm(`Delete ${item.name}?`)) {
-              onDelete(item.id);
-            }
+            toast((t) => (
+              <div className="flex flex-col gap-3">
+                <p>Delete "{item.name}"?</p>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => {
+                      onDelete(item.id);
+                      toast.dismiss(t.id);
+                      toast.success('Item deleted!');
+                    }}
+                    className="flex-1 px-3 py-1.5 bg-red-500 text-white rounded text-sm"
+                  >
+                    Delete
+                  </button>
+                  <button
+                    onClick={() => toast.dismiss(t.id)}
+                    className="flex-1 px-3 py-1.5 bg-gray-300 text-gray-700 rounded text-sm"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            ), { duration: 10000 });
           }}
           className="p-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
           title="Delete"
