@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, ChefHat, Clock, Users, X, ExternalLink, ShoppingCart } from 'lucide-react';
+import { Search, ChefHat, Clock, Users, ExternalLink, ShoppingCart } from 'lucide-react';
 import usePantry from '../hooks/usePantry';
 import useRecipes from '../hooks/useRecipes';
 import useShoppingList from '../hooks/useShoppingList';
@@ -72,39 +72,40 @@ const RecipesPage = ({ searchIngredient, onClearSearch }) => {
     }
   };
   
- const handleAddToShoppingList = (recipe) => {
-  const missingIngredients = [];
-  
-  if (recipe.extendedIngredients) {
-    recipe.extendedIngredients.forEach(ing => {
-      const ingredientName = ing.name.toLowerCase();
-      
-      // More precise matching - check if pantry item name is in ingredient OR vice versa
-      const isInPantry = items.some(pantryItem => {
-        const pantryName = pantryItem.name.toLowerCase();
+  const handleAddToShoppingList = (recipe) => {
+    const missingIngredients = [];
+    
+    if (recipe.extendedIngredients) {
+      recipe.extendedIngredients.forEach(ing => {
+        const ingredientName = ing.name.toLowerCase();
         
-        // Exact match
-        if (pantryName === ingredientName) return true;
+        // More precise matching - check if pantry item name is in ingredient OR vice versa
+        const isInPantry = items.some(pantryItem => {
+          const pantryName = pantryItem.name.toLowerCase();
+          
+          // Exact match
+          if (pantryName === ingredientName) return true;
+          
+          // Check if they're the same with slight variations (plurals, etc)
+          // But NOT if they just share a few letters
+          const words1 = pantryName.split(' ');
+          const words2 = ingredientName.split(' ');
+          
+          // Check if any significant word matches (3+ characters)
+          return words1.some(word1 => 
+            words2.some(word2 => 
+              word1.length >= 3 && word2.length >= 3 && 
+              (word1.includes(word2) || word2.includes(word1))
+            )
+          );
+        });
         
-        // Check if they're the same with slight variations (plurals, etc)
-        // But NOT if they just share a few letters
-        const words1 = pantryName.split(' ');
-        const words2 = ingredientName.split(' ');
-        
-        // Check if any significant word matches (3+ characters)
-        return words1.some(word1 => 
-          words2.some(word2 => 
-            word1.length >= 3 && word2.length >= 3 && 
-            (word1.includes(word2) || word2.includes(word1))
-          )
-        );
+        if (!isInPantry) {
+          missingIngredients.push(ing);
+        }
       });
-      
-      if (!isInPantry) {
-        missingIngredients.push(ing);
-      }
-    });
-  }
+    }
+    
     const shoppingItems = missingIngredients.map(ing => ({
       name: ing.name,
       quantity: ing.amount ? `${ing.amount} ${ing.unit}` : '1',
@@ -266,13 +267,15 @@ const RecipesPage = ({ searchIngredient, onClearSearch }) => {
               disabled={loading || items.length === 0}
               className="px-6 py-2 bg-[#10B981] text-white rounded-lg font-medium hover:bg-[#059669] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-             {loading && (
-  <LoadingSpinner message="Finding delicious recipes..." />
-)}
+              {loading ? 'Searching...' : 'Find Recipes'}
             </button>
           </div>
         </div>
       </div>
+      
+      {loading && (
+        <LoadingSpinner message="Finding delicious recipes..." />
+      )}
       
       {error && (
         <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-700">
@@ -290,7 +293,7 @@ const RecipesPage = ({ searchIngredient, onClearSearch }) => {
         </div>
       )}
       
-      {!searchPerformed && items.length > 0 && (
+      {!searchPerformed && items.length > 0 && !loading && (
         <div className="bg-white rounded-lg p-8 text-center">
           <ChefHat size={48} className="mx-auto text-gray-400 mb-4" />
           <h3 className="font-bold text-lg mb-2">Ready to cook?</h3>
