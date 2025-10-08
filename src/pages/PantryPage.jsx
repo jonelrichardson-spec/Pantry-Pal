@@ -108,32 +108,33 @@ const PantryPage = () => {
     }
   };
   
-  const sortedItems = getSortedAndGroupedItems();
-  
-  const handleAddItem = (formData) => {
-    addItem(formData);
-    setIsAddModalOpen(false);
-    setScannedItem(null);
-  };
-  
- const handleAddItem = (formData) => {
+ const sortedItems = getSortedAndGroupedItems();
+
+const handleAddItem = (formData) => {
   addItem(formData);
   setIsAddModalOpen(false);
   setScannedItem(null);
-  setIsScannerOpen(false); // Add this line
+  setIsScannerOpen(false);
 };
-  };
-  
-  const handleScan = (productInfo) => {
+
+const handleEditItem = (formData) => {
+  if (currentItem) {
+    updateItem(currentItem.id, formData);
+    setIsEditModalOpen(false);
+    setCurrentItem(null);
+  }
+};
+
+const handleScan = (productInfo) => {
   setScannedItem(productInfo);
   setIsScannerOpen(false);
   setIsAddModalOpen(true);
 };
-  
-  const openEditModal = (item) => {
-    setCurrentItem(item);
-    setIsEditModalOpen(true);
-  };
+
+const openEditModal = (item) => {
+  setCurrentItem(item);
+  setIsEditModalOpen(true);
+};
   
   const getCategoryIcon = (category) => {
     const icons = {
