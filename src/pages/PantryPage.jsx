@@ -108,33 +108,40 @@ const PantryPage = () => {
     }
   };
   
- const sortedItems = getSortedAndGroupedItems();
+  const sortedItems = getSortedAndGroupedItems();
 
-const handleAddItem = (formData) => {
-  addItem(formData);
-  setIsAddModalOpen(false);
-  setScannedItem(null);
-  setIsScannerOpen(false);
-};
+  const handleAddItem = (formData) => {
+    console.log("handleAddItem called");
+    console.log("Before - isAddModalOpen:", isAddModalOpen);
+    console.log("Before - isScannerOpen:", isScannerOpen);
+    
+    addItem(formData);
+    setIsAddModalOpen(false);
+    setScannedItem(null);
+    setIsScannerOpen(false);
+    
+    console.log("After setState calls");
+  };
 
-const handleEditItem = (formData) => {
-  if (currentItem) {
-    updateItem(currentItem.id, formData);
-    setIsEditModalOpen(false);
-    setCurrentItem(null);
-  }
-};
+  const handleEditItem = (formData) => {
+    if (currentItem) {
+      updateItem(currentItem.id, formData);
+      setIsEditModalOpen(false);
+      setCurrentItem(null);
+    }
+  };
 
-const handleScan = (productInfo) => {
-  setScannedItem(productInfo);
-  setIsScannerOpen(false);
-  setIsAddModalOpen(true);
-};
+  const handleScan = (productInfo) => {
+    console.log("handleScan called with:", productInfo);
+    setScannedItem(productInfo);
+    setIsScannerOpen(false);
+    setIsAddModalOpen(true);
+  };
 
-const openEditModal = (item) => {
-  setCurrentItem(item);
-  setIsEditModalOpen(true);
-};
+  const openEditModal = (item) => {
+    setCurrentItem(item);
+    setIsEditModalOpen(true);
+  };
   
   const getCategoryIcon = (category) => {
     const icons = {
@@ -277,6 +284,7 @@ const openEditModal = (item) => {
       <Modal
         isOpen={isAddModalOpen}
         onClose={() => {
+          console.log("Add Modal onClose called");
           setIsAddModalOpen(false);
           setScannedItem(null);
         }}
@@ -286,8 +294,10 @@ const openEditModal = (item) => {
           initialValues={scannedItem || {}}
           onSubmit={handleAddItem}
           onCancel={() => {
+            console.log("Cancel clicked");
             setIsAddModalOpen(false);
             setScannedItem(null);
+            setIsScannerOpen(false);
           }}
         />
       </Modal>
