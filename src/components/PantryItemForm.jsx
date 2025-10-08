@@ -1,75 +1,4 @@
-import React, { useState } from 'react';
-
-const categories = [
-  'Fresh Produce',
-  'Dairy & Eggs',
-  'Meat & Protein',
-  'Grains & Pasta',
-  'Canned Goods',
-  'Pantry Staples',
-  'Frozen',
-  'Other'
-];
-
-const units = ['units', 'kg', 'g', 'L', 'mL'];
-
-const PantryItemForm = ({ initialValues, onSubmit, onCancel, submitLabel = 'Add to Pantry' }) => {
-  const [formData, setFormData] = useState({
-    name: '',
-    category: 'Other',
-    quantity: 1,
-    unit: 'units',
-    purchaseDate: new Date().toISOString().slice(0, 10),
-    expirationDate: '',
-    price: '',
-    ...initialValues,
-  });
-
-  const handleChange = (e) => {
-  const { name, value } = e.target;
-  
-  // Strip dollar sign from price field
-  if (name === 'price') {
-    const cleanedPrice = value.replace(/[^0-9.]/g, ''); // Remove everything except numbers and decimal
-    setFormData({
-      ...formData,
-      [name]: cleanedPrice,
-    });
-  } else {
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-  }
-};
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    onSubmit(formData);
-  };
-
-  return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      {/* Product Name */}
-      <div>
-        <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-          Product Name*
-        </label>
-        <input
-          required
-          id="name"
-          name="name"
-          type="text"
-          value={formData.name}
-          onChange={handleChange}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md"
-          placeholder="e.g. Chicken Breast"
-        />
-      </div>
-      
-      {/* Category */}
-      <div>
-        <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-1">
+<label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-1">
           Category
         </label>
         <select
@@ -175,22 +104,23 @@ const PantryItemForm = ({ initialValues, onSubmit, onCancel, submitLabel = 'Add 
         </div>
       </div>
       
-  {/* Buttons */}
-<div className="flex gap-3 pt-4">
-  <button
-    type="button"
-    onClick={onCancel}
-    className="flex-1 px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors"
-  >
-    Cancel
-  </button>
- <button
-  type="submit"
-  className="flex-1 px-4 py-2 bg-[#FF8C42] text-white rounded-md hover:bg-[#F97316] transition-colors font-semibold shadow-md border-2 border-[#FF8C42]"
->
-  {submitLabel}
-</button>
-</div>
+      {/* Buttons */}
+      <div className="flex gap-3 pt-4">
+        <button
+          type="button"
+          onClick={handleCancel}
+          onTouchEnd={handleCancel}
+          className="flex-1 px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors"
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
+          className="flex-1 px-4 py-2 bg-[#FF8C42] text-white rounded-md hover:bg-[#F97316] transition-colors font-semibold shadow-md border-2 border-[#FF8C42]"
+        >
+          {submitLabel}
+        </button>
+      </div>
     </form>
   );
 };
