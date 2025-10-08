@@ -5,9 +5,10 @@ import Modal from '../components/Modal';
 import PantryItemForm from '../components/PantryItemForm';
 import PantryItemCard from '../components/PantryItemCard';
 import BarcodeScanner from '../components/BarcodeScanner';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 const PantryPage = () => {
-  const { items, addItem, updateItem, removeItem, getItemsByCategory } = usePantry();
+  const { items, loading, addItem, updateItem, removeItem, getItemsByCategory } = usePantry();
   const [searchTerm, setSearchTerm] = useState('');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -163,6 +164,10 @@ const PantryPage = () => {
     };
     return icons[category] || '🍽️';
   };
+
+  if (loading) {
+    return <LoadingSpinner message="Loading your pantry..." />;
+  }
   
   return (
     <div>
