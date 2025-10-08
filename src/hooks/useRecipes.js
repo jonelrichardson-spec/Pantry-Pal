@@ -22,7 +22,7 @@ export const useRecipes = () => {
     const storedApiKey = getFromStorage(API_KEY_STORAGE, '');
     
     setRecentRecipes(storedRecipes);
-    setApiKey(storedApiKey || import.meta.env.VITE_SPOONACULAR_API_KEY || '');
+setApiKey(import.meta.env.VITE_SPOONACULAR_API_KEY || storedApiKey || '');
   }, []);
 
   // Save recipes to localStorage whenever they change
