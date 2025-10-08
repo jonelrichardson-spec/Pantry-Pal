@@ -134,7 +134,7 @@ const BarcodeScanner = ({ onScan, onClose }) => {
         };
         
         onScan(productInfo);
-        onClose(); // Close scanner immediately after successful scan
+         // Close scanner immediately after successful scan
       } else {
         setError('Product not found. Please try another barcode or add manually.');
         onScan({
@@ -145,7 +145,7 @@ const BarcodeScanner = ({ onScan, onClose }) => {
           unit: 'units',
           purchaseDate: new Date().toISOString().slice(0, 10),
         });
-        onClose(); // Also close on product not found
+         // Also close on product not found
       }
     } catch (error) {
       console.error('Error fetching product info:', error);
