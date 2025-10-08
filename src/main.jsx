@@ -1,6 +1,3 @@
-import eruda from 'eruda';
-eruda.init();
-
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'

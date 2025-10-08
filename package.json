@@ -11,7 +11,6 @@
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.14",
-    "eruda": "^3.4.3",
     "html5-qrcode": "^2.3.8",
     "lucide-react": "^0.544.0",
     "react": "^19.1.1",
