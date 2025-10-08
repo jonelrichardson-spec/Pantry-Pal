@@ -116,19 +116,19 @@ const PantryPage = () => {
     setScannedItem(null);
   };
   
-  const handleEditItem = (formData) => {
-    if (currentItem) {
-      updateItem(currentItem.id, formData);
-      setIsEditModalOpen(false);
-      setCurrentItem(null);
-    }
+ const handleAddItem = (formData) => {
+  addItem(formData);
+  setIsAddModalOpen(false);
+  setScannedItem(null);
+  setIsScannerOpen(false); // Add this line
+};
   };
   
   const handleScan = (productInfo) => {
-    setScannedItem(productInfo);
-    setIsScannerOpen(false);
-    setIsAddModalOpen(true);
-  };
+  setScannedItem(productInfo);
+  setIsScannerOpen(false);
+  setIsAddModalOpen(true);
+};
   
   const openEditModal = (item) => {
     setCurrentItem(item);
