@@ -6,6 +6,7 @@ import PantryItemForm from '../components/PantryItemForm';
 import PantryItemCard from '../components/PantryItemCard';
 import BarcodeScanner from '../components/BarcodeScanner';
 import LoadingSpinner from '../components/LoadingSpinner';
+import ExpiringItemsBanner from '../components/ExpiringItemsBanner';
 
 const PantryPage = () => {
   const { items, loading, addItem, updateItem, removeItem, getItemsByCategory } = usePantry();
@@ -17,7 +18,8 @@ const PantryPage = () => {
   const [scannedItem, setScannedItem] = useState(null);
   const [sortBy, setSortBy] = useState('category');
   const [filterExpiration, setFilterExpiration] = useState('all');
-  
+  const [bannerDismissed, setBannerDismissed] = useState(false);
+
   const getDaysUntilExpiration = (expirationDate) => {
     if (!expirationDate) return 999;
     const today = new Date();
@@ -109,7 +111,21 @@ const PantryPage = () => {
     }
   };
   
+  const getExpiringItems = () => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    return items.filter(item => {
+      if (!item.expirationDate) return false;
+      const expDate = new Date(item.expirationDate);
+      expDate.setHours(0, 0, 0, 0);
+      const daysUntil = Math.ceil((expDate - today) / (1000 * 60 * 60 * 24));
+      return daysUntil <= 3;
+    });
+  };
+  
   const sortedItems = getSortedAndGroupedItems();
+  const expiringItems = getExpiringItems();
 
   const handleAddItem = (formData) => {
     console.log("handleAddItem called");
@@ -171,6 +187,16 @@ const PantryPage = () => {
   
   return (
     <div>
+      {!bannerDismissed && expiringItems.length > 0 && (
+        <ExpiringItemsBanner 
+          expiringItems={expiringItems}
+          onDismiss={() => setBannerDismissed(true)}
+          onViewItem={(item) => {
+            openEditModal(item);
+          }}
+        />
+      )}
+      
       <div className="flex gap-3 mb-6">
         <button 
           onClick={() => setIsScannerOpen(true)} 
@@ -274,12 +300,12 @@ const PantryPage = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {sortedItems[category].map((item) => (
                   <PantryItemCard 
-  key={item.id}
-  item={item}
-  onEdit={openEditModal}
-  onDelete={removeItem}
-  onUpdate={updateItem}
-/>
+                    key={item.id}
+                    item={item}
+                    onEdit={openEditModal}
+                    onDelete={removeItem}
+                    onUpdate={updateItem}
+                  />
                 ))}
               </div>
             </div>
