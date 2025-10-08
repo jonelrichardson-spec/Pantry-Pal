@@ -9,6 +9,7 @@ const BarcodeScanner = ({ onScan, onClose }) => {
   const [cameraError, setCameraError] = useState('');
   const [isScanning, setIsScanning] = useState(false);
   const html5QrCodeRef = useRef(null);
+  const hasScannedRef = useRef(false); // Prevent multiple scans
   
   useEffect(() => {
     if (scanMode === 'camera' && !isScanning) {
@@ -23,6 +24,7 @@ const BarcodeScanner = ({ onScan, onClose }) => {
   const startCamera = async () => {
     setCameraError('');
     setIsScanning(true);
+    hasScannedRef.current = false; // Reset scan flag
     
     try {
       console.log("Initializing camera...");
@@ -57,8 +59,12 @@ const BarcodeScanner = ({ onScan, onClose }) => {
           ]
         },
         (decodedText, decodedResult) => {
-          console.log("Scanned barcode:", decodedText);
-          handleSuccessfulScan(decodedText);
+          // Prevent multiple scans of the same barcode
+          if (!hasScannedRef.current) {
+            console.log("Scanned barcode:", decodedText);
+            hasScannedRef.current = true;
+            handleSuccessfulScan(decodedText);
+          }
         },
         (errorMessage) => {
           // Silent - scanning errors are normal
@@ -84,6 +90,7 @@ const BarcodeScanner = ({ onScan, onClose }) => {
     if (html5QrCodeRef.current && isScanning) {
       try {
         await html5QrCodeRef.current.stop();
+        html5QrCodeRef.current.clear();
         console.log("Camera stopped");
       } catch (err) {
         console.error("Error stopping camera:", err);
@@ -93,12 +100,17 @@ const BarcodeScanner = ({ onScan, onClose }) => {
   };
   
   const handleSuccessfulScan = async (barcode) => {
+    console.log("Barcode detected, stopping camera immediately");
+    
+    // CRITICAL: Stop camera FIRST before doing anything else
+    await stopCamera();
+    
     // Add haptic feedback
     if (navigator.vibrate) {
       navigator.vibrate(200);
     }
     
-    await stopCamera();
+    // Now fetch product info
     fetchProductInfo(barcode);
     setScanMode('manual');
     
@@ -134,7 +146,6 @@ const BarcodeScanner = ({ onScan, onClose }) => {
         };
         
         onScan(productInfo);
-         // Close scanner immediately after successful scan
       } else {
         setError('Product not found. Please try another barcode or add manually.');
         onScan({
@@ -145,7 +156,6 @@ const BarcodeScanner = ({ onScan, onClose }) => {
           unit: 'units',
           purchaseDate: new Date().toISOString().slice(0, 10),
         });
-         // Also close on product not found
       }
     } catch (error) {
       console.error('Error fetching product info:', error);
