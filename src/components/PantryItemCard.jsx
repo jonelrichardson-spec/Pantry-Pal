@@ -1,5 +1,5 @@
 import React from 'react';
-import { Pencil, Trash2, CheckCircle } from 'lucide-react';
+import { Pencil, Trash2, CheckCircle, AlertCircle, Clock } from 'lucide-react';
 
 const PantryItemCard = ({ item, onEdit, onDelete }) => {
   const getDaysUntilExpiration = () => {
@@ -14,30 +14,91 @@ const PantryItemCard = ({ item, onEdit, onDelete }) => {
   const daysUntilExpiry = getDaysUntilExpiration();
 
   const getExpirationColor = () => {
-    if (daysUntilExpiry === null) return 'bg-gray-100 text-gray-700';
-    if (daysUntilExpiry < 0) return 'bg-red-100 text-red-800 border-red-300';
-    if (daysUntilExpiry === 0) return 'bg-red-100 text-red-800 border-red-300';
-    if (daysUntilExpiry <= 3) return 'bg-orange-100 text-orange-800 border-orange-300';
-    if (daysUntilExpiry <= 7) return 'bg-yellow-100 text-yellow-800 border-yellow-300';
-    return 'bg-green-100 text-green-800 border-green-300';
+    if (daysUntilExpiry === null) return 'border-gray-200';
+    if (daysUntilExpiry < 0) return 'border-red-500';
+    if (daysUntilExpiry === 0) return 'border-red-500';
+    if (daysUntilExpiry <= 3) return 'border-orange-500';
+    if (daysUntilExpiry <= 7) return 'border-yellow-500';
+    return 'border-green-500';
   };
 
-  const getExpirationText = () => {
-    if (daysUntilExpiry === null) return 'No expiration date';
-    if (daysUntilExpiry < 0) return `Expired ${Math.abs(daysUntilExpiry)} days ago`;
-    if (daysUntilExpiry === 0) return 'Expires today';
-    if (daysUntilExpiry === 1) return 'Expires tomorrow';
-    return `Expires in ${daysUntilExpiry} days`;
+  const getExpirationStatus = () => {
+    if (daysUntilExpiry === null) {
+      return {
+        icon: <Clock size={16} className="text-gray-500" />,
+        text: 'No expiration date',
+        color: 'text-gray-600',
+        bg: 'bg-gray-50'
+      };
+    }
+    if (daysUntilExpiry < 0) {
+      return {
+        icon: <AlertCircle size={16} className="text-red-600" />,
+        text: `Expired ${Math.abs(daysUntilExpiry)} day${Math.abs(daysUntilExpiry) !== 1 ? 's' : ''} ago!`,
+        color: 'text-red-700 font-bold',
+        bg: 'bg-red-50'
+      };
+    }
+    if (daysUntilExpiry === 0) {
+      return {
+        icon: <AlertCircle size={16} className="text-red-600" />,
+        text: 'Expires TODAY!',
+        color: 'text-red-700 font-bold',
+        bg: 'bg-red-50'
+      };
+    }
+    if (daysUntilExpiry === 1) {
+      return {
+        icon: <AlertCircle size={16} className="text-orange-600" />,
+        text: 'Expires tomorrow!',
+        color: 'text-orange-700 font-bold',
+        bg: 'bg-orange-50'
+      };
+    }
+    if (daysUntilExpiry <= 3) {
+      return {
+        icon: <AlertCircle size={16} className="text-orange-500" />,
+        text: `Expires in ${daysUntilExpiry} days`,
+        color: 'text-orange-700 font-semibold',
+        bg: 'bg-orange-50'
+      };
+    }
+    if (daysUntilExpiry <= 7) {
+      return {
+        icon: <Clock size={16} className="text-yellow-600" />,
+        text: `Expires in ${daysUntilExpiry} days`,
+        color: 'text-yellow-700 font-medium',
+        bg: 'bg-yellow-50'
+      };
+    }
+    return {
+      icon: <Clock size={16} className="text-green-600" />,
+      text: `Fresh - ${daysUntilExpiry} days left`,
+      color: 'text-green-700',
+      bg: 'bg-green-50'
+    };
   };
+
+  const expirationStatus = getExpirationStatus();
 
   return (
-    <div className={`bg-white rounded-lg p-4 shadow-sm border-2 ${getExpirationColor()}`}>
-      <div className="flex justify-between items-start mb-2">
+    <div className={`bg-white rounded-lg p-4 shadow-sm border-4 ${getExpirationColor()}`}>
+      <div className="flex justify-between items-start mb-3">
         <h3 className="font-bold text-lg">{item.name}</h3>
-        <span className="text-sm bg-gray-200 px-2 py-1 rounded">
+        <span className="text-xs bg-gray-200 px-2 py-1 rounded">
           {item.category}
         </span>
       </div>
+
+      {/* Prominent Expiration Status */}
+      {item.expirationDate && (
+        <div className={`flex items-center gap-2 p-2 rounded-md mb-3 ${expirationStatus.bg}`}>
+          {expirationStatus.icon}
+          <span className={`text-sm ${expirationStatus.color}`}>
+            {expirationStatus.text}
+          </span>
+        </div>
+      )}
 
       <div className="space-y-1 text-sm mb-3">
         <p>
@@ -49,8 +110,8 @@ const PantryItemCard = ({ item, onEdit, onDelete }) => {
           </p>
         )}
         {item.expirationDate && (
-          <p className="font-medium">
-            {getExpirationText()}
+          <p>
+            <span className="font-medium">Expires:</span> {item.expirationDate}
           </p>
         )}
         {item.price && parseFloat(item.price) > 0 && (
