@@ -70,27 +70,39 @@ const RecipesPage = ({ searchIngredient, onClearSearch }) => {
     }
   };
   
-  const handleAddToShoppingList = (recipe) => {
-    const missingIngredients = [];
-    
-    if (recipe.extendedIngredients) {
-      recipe.extendedIngredients.forEach(ing => {
-        const isInPantry = items.some(pantryItem => 
-          pantryItem.name.toLowerCase().includes(ing.name.toLowerCase()) ||
-          ing.name.toLowerCase().includes(pantryItem.name.toLowerCase())
-        );
+ const handleAddToShoppingList = (recipe) => {
+  const missingIngredients = [];
+  
+  if (recipe.extendedIngredients) {
+    recipe.extendedIngredients.forEach(ing => {
+      const ingredientName = ing.name.toLowerCase();
+      
+      // More precise matching - check if pantry item name is in ingredient OR vice versa
+      const isInPantry = items.some(pantryItem => {
+        const pantryName = pantryItem.name.toLowerCase();
         
-        if (!isInPantry) {
-          missingIngredients.push(ing);
-        }
+        // Exact match
+        if (pantryName === ingredientName) return true;
+        
+        // Check if they're the same with slight variations (plurals, etc)
+        // But NOT if they just share a few letters
+        const words1 = pantryName.split(' ');
+        const words2 = ingredientName.split(' ');
+        
+        // Check if any significant word matches (3+ characters)
+        return words1.some(word1 => 
+          words2.some(word2 => 
+            word1.length >= 3 && word2.length >= 3 && 
+            (word1.includes(word2) || word2.includes(word1))
+          )
+        );
       });
-    }
-    
-    if (missingIngredients.length === 0) {
-      alert('You have all ingredients for this recipe!');
-      return;
-    }
-    
+      
+      if (!isInPantry) {
+        missingIngredients.push(ing);
+      }
+    });
+  }
     const shoppingItems = missingIngredients.map(ing => ({
       name: ing.name,
       quantity: ing.amount ? `${ing.amount} ${ing.unit}` : '1',

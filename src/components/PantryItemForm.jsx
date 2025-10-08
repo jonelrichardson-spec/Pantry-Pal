@@ -25,24 +25,67 @@ const PantryItemForm = ({ initialValues, onSubmit, onCancel, submitLabel = 'Add 
     ...initialValues,
   });
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    
-    // Strip dollar sign from price field
-    if (name === 'price') {
-      const cleanedPrice = value.replace(/[^0-9.]/g, ''); // Remove everything except numbers and decimal
-      setFormData({
-        ...formData,
-        [name]: cleanedPrice,
-      });
-    } else {
-      setFormData({
-        ...formData,
-        [name]: value,
-      });
-    }
-  };
-
+ const handleChange = (e) => {
+  const { name, value } = e.target;
+  
+  // Strip dollar sign from price field
+  if (name === 'price') {
+    const cleanedPrice = value.replace(/[^0-9.]/g, '');
+    setFormData({
+      ...formData,
+      [name]: cleanedPrice,
+    });
+  } 
+  // Auto-suggest expiration date when category changes
+  else if (name === 'category' && !formData.expirationDate) {
+    const suggestedExpiration = suggestExpirationDate(value);
+    setFormData({
+      ...formData,
+      [name]: value,
+      expirationDate: suggestedExpiration,
+    });
+  } 
+  else {
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  }
+};
+// Auto-suggest expiration date based on category
+const suggestExpirationDate = (category) => {
+  const today = new Date();
+  let daysToAdd = 365; // Default: 1 year
+  
+  switch(category) {
+    case 'Fresh Produce':
+      daysToAdd = 5; // 5 days
+      break;
+    case 'Dairy & Eggs':
+      daysToAdd = 7; // 1 week
+      break;
+    case 'Meat & Protein':
+      daysToAdd = 3; // 3 days
+      break;
+    case 'Grains & Pasta':
+      daysToAdd = 180; // 6 months
+      break;
+    case 'Canned Goods':
+      daysToAdd = 730; // 2 years
+      break;
+    case 'Pantry Staples':
+      daysToAdd = 365; // 1 year
+      break;
+    case 'Frozen':
+      daysToAdd = 90; // 3 months
+      break;
+    default:
+      daysToAdd = 30; // 1 month for unknown
+  }
+  
+  const expirationDate = new Date(today.getTime() + (daysToAdd * 24 * 60 * 60 * 1000));
+  return expirationDate.toISOString().slice(0, 10);
+};
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("Form submitted");
