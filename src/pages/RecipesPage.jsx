@@ -26,21 +26,41 @@ const RecipesPage = ({ searchIngredient, onClearSearch }) => {
   const [mealTypeFilter, setMealTypeFilter] = useState('');
   
   // Auto-search when navigating with specific ingredient
-  useEffect(() => {
-    if (searchIngredient && items.length > 0) {
-      const ingredients = items.map(item => item.name);
-      
-      findRecipesByIngredients(ingredients, numberOfRecipes, 1, true)
-        .then(results => {
-          setRecipes(results);
-          setSearchPerformed(true);
+ // Auto-search when navigating with specific ingredient
+useEffect(() => {
+  if (searchIngredient && items.length > 0) {
+    // Search for recipes specifically featuring the highlighted ingredient
+    const ingredients = items.map(item => item.name);
+    
+    findRecipesByIngredients(ingredients, numberOfRecipes, 1, true)
+      .then(results => {
+        // Filter results to prioritize recipes with the searched ingredient
+        const filtered = results.sort((a, b) => {
+          const aHasIngredient = a.usedIngredients?.some(ing => 
+            ing.name.toLowerCase().includes(searchIngredient.toLowerCase())
+          ) || a.missedIngredients?.some(ing => 
+            ing.name.toLowerCase().includes(searchIngredient.toLowerCase())
+          );
+          const bHasIngredient = b.usedIngredients?.some(ing => 
+            ing.name.toLowerCase().includes(searchIngredient.toLowerCase())
+          ) || b.missedIngredients?.some(ing => 
+            ing.name.toLowerCase().includes(searchIngredient.toLowerCase())
+          );
+          
+          if (aHasIngredient && !bHasIngredient) return -1;
+          if (!aHasIngredient && bHasIngredient) return 1;
+          return 0;
         });
-      
-      onClearSearch();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchIngredient]);
-  
+        
+        setRecipes(filtered);
+        setSearchPerformed(true);
+      });
+    
+    onClearSearch();
+  }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+}, [searchIngredient]);
+
   const getIngredientList = () => {
     return items.map(item => item.name);
   };
@@ -231,7 +251,13 @@ const RecipesPage = ({ searchIngredient, onClearSearch }) => {
                 <option value={20}>20 recipes</option>
               </select>
             </div>
-            
+            {searchIngredient && (
+  <div className="bg-blue-50 border-2 border-blue-200 rounded-lg p-4 mb-4">
+    <p className="text-sm text-blue-800">
+      <strong>Showing recipes featuring:</strong> {searchIngredient}
+    </p>
+  </div>
+)}
             <div className="flex-1 min-w-[200px]">
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Dietary preference (optional)

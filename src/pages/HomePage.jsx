@@ -158,9 +158,9 @@ const HomePage = ({ onNavigate }) => {
                       )}
                     </div>
                   </div>
-                <button 
+               <button
   onClick={() => onNavigate('recipes', item.name)}
-  className="px-4 py-2 bg-[#FF8C42] text-white text-sm rounded-lg hover:bg-[#F97316] transition-colors whitespace-nowrap ml-3"
+  className="px-3 py-1 bg-[#10B981] text-white rounded hover:bg-[#059669] transition-colors text-sm"
 >
   Find Recipe
 </button>
