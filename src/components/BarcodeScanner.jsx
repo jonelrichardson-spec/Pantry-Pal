@@ -188,27 +188,7 @@ const BarcodeScanner = ({ onScan, onClose }) => {
           Choose your scanning method below
         </p>
       </div>
-      <div className="mb-4 text-center">
-  <h3 className="font-bold mb-2">Scan Product Barcode</h3>
-  <p className="text-sm text-gray-600">
-    Choose your scanning method below
-  </p>
-  {/* Test vibration button */}
-  <button
-    onClick={() => {
-      if (navigator.vibrate) {
-        navigator.vibrate(200);
-        console.log("Vibration triggered");
-      } else {
-        console.log("Vibration API not supported");
-        alert("Vibration not supported on this device");
-      }
-    }}
-    className="mt-2 px-3 py-1 bg-blue-500 text-white text-xs rounded"
-  >
-    Test Vibration
-  </button>
-</div>
+      
       <div className="flex gap-2 mb-4">
         <button
           onClick={() => handleModeChange('manual')}

@@ -129,22 +129,34 @@ const PantryItemCard = ({ item, onEdit, onDelete }) => {
           </div>
         </div>
         
-        <div className="flex flex-col gap-2">
-          <button 
-            onClick={() => onEdit(item)} 
-            className="p-2 text-gray-500 hover:text-[#FF8C42] hover:bg-orange-100 rounded-lg transition-colors"
-            title="Edit item"
-          >
-            <Edit size={18} />
-          </button>
-          <button 
-            onClick={() => onDelete(item.id)} 
-            className="p-2 text-gray-500 hover:text-[#EF4444] hover:bg-red-100 rounded-lg transition-colors"
-            title="Delete item"
-          >
-            <Trash2 size={18} />
-          </button>
-        </div>
+ <div className="flex gap-2">
+  <button
+    onClick={() => onEdit(item)}
+    className="flex-1 px-3 py-1.5 bg-blue-500 text-white text-sm rounded hover:bg-blue-600 transition-colors"
+  >
+    Edit
+  </button>
+  <button
+    onClick={() => {
+      if (window.confirm(`Mark "${item.name}" as used up and remove from pantry?`)) {
+        onDelete(item.id);
+      }
+    }}
+    className="flex-1 px-3 py-1.5 bg-green-500 text-white text-sm rounded hover:bg-green-600 transition-colors"
+  >
+    Used Up
+  </button>
+  <button
+    onClick={() => {
+      if (window.confirm(`Delete ${item.name}?`)) {
+        onDelete(item.id);
+      }
+    }}
+    className="px-3 py-1.5 bg-red-500 text-white text-sm rounded hover:bg-red-600 transition-colors"
+  >
+    Delete
+  </button>
+</div>
       </div>
     </div>
   );
