@@ -29,19 +29,24 @@ const RecipesPage = ({ searchIngredient, onClearSearch }) => {
  // Auto-search when navigating with specific ingredient
 // Auto-search when navigating with specific ingredient
 // Auto-search when navigating with specific ingredient
+// Auto-search when navigating with specific ingredient
 useEffect(() => {
   console.log("useEffect triggered - searchIngredient:", searchIngredient);
   console.log("Items available:", items.length);
   
-  if (searchIngredient) {
+  if (searchIngredient && items.length > 0) {  // Wait for items to load
     console.log("Searching for recipes with ingredient:", searchIngredient);
     
-    // Check if API key exists
-    const apiKey = import.meta.env.VITE_SPOONACULAR_API_KEY;
-    console.log("API key exists?", !!apiKey);
+    // Clean up the ingredient name (remove brand names, make generic)
+    const cleanIngredient = searchIngredient
+      .toLowerCase()
+      .replace(/\b(tyson|perdue|kraft|nestle|great value|kirkland)\b/gi, '') // Remove common brand names
+      .trim();
     
-    // Search using just the specific ingredient
-    findRecipesByIngredients([searchIngredient], numberOfRecipes, 1, true)
+    console.log("Cleaned ingredient:", cleanIngredient);
+    
+    // Search using the cleaned ingredient name
+    findRecipesByIngredients([cleanIngredient], numberOfRecipes, 1, true)
       .then(results => {
         console.log("Found recipes:", results.length);
         setRecipes(results);
@@ -54,8 +59,7 @@ useEffect(() => {
     onClearSearch();
   }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-}, [searchIngredient]);
-
+}, [searchIngredient, items.length]); // Added items.length as dependency
   const getIngredientList = () => {
     return items.map(item => item.name);
   };
