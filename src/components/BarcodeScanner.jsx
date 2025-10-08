@@ -98,13 +98,13 @@ const BarcodeScanner = ({ onScan, onClose }) => {
       console.error("Camera error:", err);
       setIsScanning(false);
       
-      if (err.name === 'NotAllowedError' || err.message?.includes('Permission')) {
-        setCameraError('Camera access denied. Please allow camera permissions and try again.');
-      } else if (err.name === 'NotFoundError') {
-        setCameraError('No camera found on this device.');
-      } else {
-        setCameraError(`Camera error: ${err.message || 'Unable to access camera'}`);
-      }
+     if (err.name === 'NotAllowedError' || err.message?.includes('Permission')) {
+  setCameraError('Camera access denied. To enable: Tap the "aA" icon in Safari address bar → Website Settings → Camera → Allow');
+} else if (err.name === 'NotFoundError') {
+  setCameraError('No camera found on this device.');
+} else {
+  setCameraError(`Camera error: ${err.message || 'Unable to access camera'}`);
+}
     }
   };
   

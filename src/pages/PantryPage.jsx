@@ -274,11 +274,12 @@ const PantryPage = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {sortedItems[category].map((item) => (
                   <PantryItemCard 
-                    key={item.id}
-                    item={item}
-                    onEdit={openEditModal}
-                    onDelete={removeItem}
-                  />
+  key={item.id}
+  item={item}
+  onEdit={openEditModal}
+  onDelete={removeItem}
+  onUpdate={updateItem}
+/>
                 ))}
               </div>
             </div>

@@ -2,7 +2,7 @@ import React from 'react';
 import { Pencil, Trash2, CheckCircle, AlertCircle, Clock } from 'lucide-react';
 import toast from 'react-hot-toast';
 
-const PantryItemCard = ({ item, onEdit, onDelete }) => {
+const PantryItemCard = ({ item, onEdit, onDelete, onUpdate }) => {
   const getDaysUntilExpiration = () => {
     if (!item.expirationDate) return null;
     const today = new Date();
@@ -82,6 +82,62 @@ const PantryItemCard = ({ item, onEdit, onDelete }) => {
 
   const expirationStatus = getExpirationStatus();
 
+  const handleUsedUp = () => {
+    const currentQty = parseFloat(item.quantity) || 1;
+    
+    if (currentQty <= 1) {
+      // Last one - confirm deletion
+      toast((t) => (
+        <div className="flex flex-col gap-3">
+          <p>This is the last "{item.name}". Remove from pantry?</p>
+          <div className="flex gap-2">
+            <button
+              onClick={() => {
+                onDelete(item.id);
+                toast.dismiss(t.id);
+                toast.success('Item removed from pantry!');
+              }}
+              className="flex-1 px-3 py-1.5 bg-green-500 text-white rounded text-sm"
+            >
+              Yes, Remove
+            </button>
+            <button
+              onClick={() => toast.dismiss(t.id)}
+              className="flex-1 px-3 py-1.5 bg-gray-300 text-gray-700 rounded text-sm"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      ), { duration: 10000 });
+    } else {
+      // More than 1 - reduce quantity
+      toast((t) => (
+        <div className="flex flex-col gap-3">
+          <p>Used one "{item.name}"? ({currentQty} → {currentQty - 1})</p>
+          <div className="flex gap-2">
+            <button
+              onClick={() => {
+                onUpdate(item.id, { quantity: currentQty - 1 });
+                toast.dismiss(t.id);
+                toast.success('Quantity reduced!');
+              }}
+              className="flex-1 px-3 py-1.5 bg-green-500 text-white rounded text-sm"
+            >
+              Yes, Used One
+            </button>
+            <button
+              onClick={() => toast.dismiss(t.id)}
+              className="flex-1 px-3 py-1.5 bg-gray-300 text-gray-700 rounded text-sm"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      ), { duration: 10000 });
+    }
+  };
+
   return (
     <div className={`bg-white rounded-lg p-4 shadow-sm border-4 ${getExpirationColor()}`}>
       <div className="flex justify-between items-start mb-3">
@@ -91,7 +147,6 @@ const PantryItemCard = ({ item, onEdit, onDelete }) => {
         </span>
       </div>
 
-      {/* Prominent Expiration Status */}
       {item.expirationDate && (
         <div className={`flex items-center gap-2 p-2 rounded-md mb-3 ${expirationStatus.bg}`}>
           {expirationStatus.icon}
@@ -131,33 +186,9 @@ const PantryItemCard = ({ item, onEdit, onDelete }) => {
           <Pencil size={16} />
         </button>
         <button
-          onClick={() => {
-            toast((t) => (
-              <div className="flex flex-col gap-3">
-                <p>Mark "{item.name}" as used up?</p>
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => {
-                      onDelete(item.id);
-                      toast.dismiss(t.id);
-                      toast.success('Item marked as used!');
-                    }}
-                    className="flex-1 px-3 py-1.5 bg-green-500 text-white rounded text-sm"
-                  >
-                    Yes
-                  </button>
-                  <button
-                    onClick={() => toast.dismiss(t.id)}
-                    className="flex-1 px-3 py-1.5 bg-gray-300 text-gray-700 rounded text-sm"
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </div>
-            ), { duration: 10000 });
-          }}
+          onClick={handleUsedUp}
           className="p-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors"
-          title="Used Up"
+          title="Used One"
         >
           <CheckCircle size={16} />
         </button>
