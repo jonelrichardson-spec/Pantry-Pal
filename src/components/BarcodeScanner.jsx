@@ -51,62 +51,56 @@ const BarcodeScanner = ({ onScan, onClose }) => {
   };
   
   const startCamera = async () => {
-    setCameraError('');
-    setIsScanning(true);
-    hasScannedRef.current = false;
+  setCameraError('');
+  setIsScanning(true);
+  hasScannedRef.current = false;
+  
+  try {
+    console.log("Initializing camera...");
     
-    try {
-      console.log("Initializing camera...");
-      
-      html5QrCodeRef.current = new Html5Qrcode("reader");
-      
-     await html5QrCodeRef.current.start(
-  { 
-    facingMode: { exact: "environment" },
-    aspectRatio: 1.777778,
-    focusMode: "continuous",
-    advanced: [{ focusMode: "continuous" }]
-  },
-  {
-    fps: 30, // Increased from 10 to 30
-    qrbox: { width: 300, height: 150 }, // Wider box, better for barcodes
-    aspectRatio: 2.0, // Better for horizontal barcodes
-    disableFlip: false,
-    // Only barcode formats, removed QR codes for faster scanning
-    formatsToSupport: [
-      5,  // CODE_128 (most common)
-      9,  // EAN_13 (most products)
-      10, // EAN_8
-      14, // UPC_A (US products)
-      15, // UPC_E
-    ]
-  },
-        (decodedText, decodedResult) => {
-          if (!hasScannedRef.current) {
-            console.log("Scanned barcode:", decodedText);
-            hasScannedRef.current = true;
-            handleSuccessfulScan(decodedText);
-          }
-        },
-        (errorMessage) => {
-          // Silent - scanning errors are normal
+    html5QrCodeRef.current = new Html5Qrcode("reader");
+    
+    await html5QrCodeRef.current.start(
+      { facingMode: "environment" },  // SIMPLIFIED - only facingMode
+      {
+        fps: 30,
+        qrbox: { width: 300, height: 150 },
+        aspectRatio: 2.0,
+        disableFlip: false,
+        formatsToSupport: [
+          5,  // CODE_128
+          9,  // EAN_13
+          10, // EAN_8
+          14, // UPC_A
+          15, // UPC_E
+        ]
+      },
+      (decodedText, decodedResult) => {
+        if (!hasScannedRef.current) {
+          console.log("Scanned barcode:", decodedText);
+          hasScannedRef.current = true;
+          handleSuccessfulScan(decodedText);
         }
-      );
-      
-      console.log("Camera started successfully");
-    } catch (err) {
-      console.error("Camera error:", err);
-      setIsScanning(false);
-      
-     if (err.name === 'NotAllowedError' || err.message?.includes('Permission')) {
-  setCameraError('Camera access denied. To enable: Tap the "aA" icon in Safari address bar → Website Settings → Camera → Allow');
-} else if (err.name === 'NotFoundError') {
-  setCameraError('No camera found on this device.');
-} else {
-  setCameraError(`Camera error: ${err.message || 'Unable to access camera'}`);
-}
+      },
+      (errorMessage) => {
+        // Silent - scanning errors are normal
+      }
+    );
+    
+    console.log("Camera started successfully");
+  } catch (err) {
+    console.error("Camera error:", err);
+    setIsScanning(false);
+    
+    if (err.name === 'NotAllowedError' || err.message?.includes('Permission')) {
+      setCameraError('Camera access denied. Please allow camera permissions in your browser settings and reload the page.');
+    } else if (err.name === 'NotFoundError') {
+      setCameraError('No camera found on this device.');
+    } else {
+      setCameraError(`Camera error: ${err.message || 'Unable to access camera'}. Make sure no other app is using the camera.`);
     }
-  };
+  }
+};
   
   const stopCamera = async () => {
     if (html5QrCodeRef.current && isScanning) {
