@@ -30,9 +30,9 @@ function App() {
     <div className="min-h-screen bg-[#FFFBF5] pb-20">
       {/* Header */}
       <header className="bg-white shadow-sm p-4">
-        <h1 className="text-2xl font-bold text-[#292524] flex items-center gap-2">
-          🧺 PantryPal
-        </h1>
+      <h1 className="text-2xl font-bold text-[#292524] flex items-center gap-2">
+  🗂️ FoodKeeper
+</h1>
       </header>
 
       {/* Main Content */}
