@@ -34,7 +34,7 @@ const HomePage = ({ onNavigate }) => {
     <div className="space-y-6">
       <div className="bg-gradient-to-r from-[#FF8C42] to-[#F97316] rounded-lg p-6 text-white">
         <h2 className="text-2xl font-bold mb-2">
-          Welcome to PantryPal! 🧺
+          Welcome to FoodKeeper! 
         </h2>
         <p>Manage your pantry and discover recipes with what you have on hand.</p>
       </div>
