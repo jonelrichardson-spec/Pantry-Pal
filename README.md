@@ -2,6 +2,8 @@
 
 > Track what's in your pantry, get alerts before food expires, and find recipes to use it all up — so less food hits the trash.
 
+![FoodKeeper Dashboard](docs/screenshot.png)
+
 ![FoodKeeper Dashboard](https://img.shields.io/badge/status-live-brightgreen) ![React](https://img.shields.io/badge/React-19-blue) ![Vite](https://img.shields.io/badge/Vite-7-purple) ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-06B6D4)
 
 **Live:** [pantry-pal-liart.vercel.app](https://pantry-pal-liart.vercel.app)
@@ -121,4 +123,4 @@ Built as a solo project during the **Pursuit Fellowship** (October 2025). FoodKe
 
 ---
 
-Built by [Jonel Richardson](https://linkedin.com/in/jonel-richardson)
+Built by [Jonel Richardson](https://linkedin.com/in/jonel-richardson-09a399382)
