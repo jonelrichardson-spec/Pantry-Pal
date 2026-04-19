@@ -84,7 +84,7 @@ User
 
 ### Installation
 ```bash
-git clone https://github.com/jonelrichardson-spec/pantry-pal.git
+git clone https://github.com/jonelrichardson/pantry-pal.git
 cd pantry-pal
 npm install
 ```
