@@ -123,4 +123,4 @@ Built as a solo project during the **Pursuit Fellowship** (October 2025). FoodKe
 
 ---
 
-Built by [Jonel Richardson](https://linkedin.com/in/jonel-richardson-09a399382)
+Built by [Jonel Richardson](https://linkedin.com/in/jonel-richardson)
